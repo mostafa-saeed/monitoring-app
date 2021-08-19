@@ -1,6 +1,11 @@
 import https from 'https';
 import axios from 'axios';
 
+const PROMISE_STATUSES = {
+  fulfilled: 'up',
+  rejected: 'down',
+};
+
 const ALLOW_UNAUTHORIZED_SSL_AGENT = new https.Agent({
   rejectUnauthorized: false,
 });
@@ -41,7 +46,26 @@ const createRequestOptions = (check) => {
   return options;
 };
 
+const getResponse = (promiseResult) => {
+  return promiseResult.status === 'fulfilled' ?
+    {
+      response: promiseResult.value.data,
+      duration: promiseResult.value.duration,
+    } : {
+      response: promiseResult.reason.response ? promiseResult.reason.response.data : promiseResult.reason.message,
+      duration: promiseResult.reason.duration,
+    };
+};
 
-export const dispatchRequests = (checks) => Promise.allSettled(
-  checks.map((check) => axios(createRequestOptions(check)))
-);
+
+export const dispatchRequests = async (checks) => {
+  const promisesResults = await Promise.allSettled(
+    checks.map((check) => axios(createRequestOptions(check)))
+  );
+
+  return checks.map((check, index) => ({
+    status: PROMISE_STATUSES[promisesResults[index].status],
+    check,
+    ...getResponse(promisesResults[index]),
+  }));
+};

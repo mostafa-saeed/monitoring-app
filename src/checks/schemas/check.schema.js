@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import ResponseStatuses from '../../requestor/responseStatuses.enum.js';
 
 const { Schema, model } = mongoose;
 
@@ -34,8 +35,17 @@ const checkSchema = new Schema({
     type: Boolean,
     default: true,
   },
-  nextCheck: Date,
+  tags: {
+    type: [String],
+    default: [],
+  },
 
+  nextCheck: Date,
+  status: {
+    type: String,
+    enum: Object.values(ResponseStatuses),
+    default: ResponseStatuses.DOWN,
+  },
   user: {
     type: Schema.Types.ObjectId,
     ref: 'Users',

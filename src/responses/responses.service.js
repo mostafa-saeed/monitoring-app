@@ -1,31 +1,9 @@
 import mongoose from 'mongoose';
 import Responses from './schemas/response.schema.js';
 
-const STATUSES = {
-  fulfilled: 'up',
-  rejected: 'down',
-};
-
 export default {
-  getResponse(promiseResult) {
-    return promiseResult.status === 'fulfilled' ?
-      {
-        response: promiseResult.value.data,
-        duration: promiseResult.value.duration,
-      } : {
-        response: promiseResult.reason.response ? promiseResult.reason.response.data : promiseResult.reason.message,
-        duration: promiseResult.reason.duration,
-      };
-  },
 
-  addResponses(checks, promiseResult) {
-    // Merge data
-    const responses = checks.map((check, index) => ({
-      status: STATUSES[promiseResult[index].status],
-      check,
-      ...this.getResponse(promiseResult[index]),
-    }));
-
+  addResponses(responses) {
     return Responses.insertMany(responses);
   },
 
@@ -33,6 +11,7 @@ export default {
     return Responses.aggregate([
       // Find all the responses for this id
       { $match: { check: mongoose.Types.ObjectId(checkId) } },
+      // I might consider limiting the results
       // Group the responses in order to aggregate their data
       {
         $group: {
@@ -82,28 +61,16 @@ export default {
         $addFields: {
           availability: {
             $multiply: [
-              {$divide: ['$upCount', '$checks']},
+              { $divide: ['$upCount', '$checks'] },
               100
-              ]
+            ]
           },
+          status: '$checkObject.status',
           uptime: {
             $multiply: ['$upCount', '$checkObject.interval', 60]
           },
           downtime: {
             $multiply: ['$downCount', '$checkObject.interval', 60]
-          },
-        }
-      },
-      {
-        $addFields: {
-          status: {
-            $switch: {
-              branches: [
-                { case: { $eq: ['$availability', 100] }, then: 'Always up' },
-                { case: { $eq: ['$availability', 0] }, then: 'Always down' },
-              ],
-              default: 'Not always up'
-            }
           },
         }
       },
