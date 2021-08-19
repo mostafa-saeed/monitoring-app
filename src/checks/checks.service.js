@@ -10,8 +10,8 @@ const DEFAULT_CHECK_OPTIONS = {
 };
 
 export default {
-  create(check) {
-    check = Object.assign({}, DEFAULT_CHECK_OPTIONS, check);
+  create(checkPayload) {
+    const check = { ...DEFAULT_CHECK_OPTIONS, ...checkPayload };
     check.nextCheck = Date.now() + check.interval * MILLISECONDS_IN_MINUTE;
     return Checks.create(check);
   },
@@ -43,13 +43,13 @@ export default {
                 $add: [
                   time, {
                     $multiply: ['$interval', MILLISECONDS_IN_MINUTE],
-                  }
-                ]
-              }
-            }
+                  },
+                ],
+              },
+            },
           },
-        }
-      ]
+        },
+      ],
     );
   },
 
@@ -71,8 +71,8 @@ export default {
             // { $limit: '$$threshold' },
           ],
           as: 'responses',
-        }
-      }
+        },
+      },
     ]);
 
     // Trunc checks' responses
@@ -104,9 +104,9 @@ export default {
           $cond: [
             { $eq: ['$status', 'up'] },
             'down',
-            'up'
-          ]
-        }
+            'up',
+          ],
+        },
       },
     }]);
   },

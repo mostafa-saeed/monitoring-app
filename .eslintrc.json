@@ -3,11 +3,26 @@
         "es2021": true,
         "node": true
     },
-    "extends": "eslint:recommended",
+    "extends": [
+        "airbnb-base"
+    ],
     "parserOptions": {
         "ecmaVersion": 12,
         "sourceType": "module"
     },
     "rules": {
+        "import/extensions": 0,
+        "no-param-reassign": [
+            2,
+            {
+                "props": false
+            }
+        ],
+        "no-underscore-dangle": [
+            2,
+            {
+                "allow": ["_id"]
+            }
+        ]
     }
 }

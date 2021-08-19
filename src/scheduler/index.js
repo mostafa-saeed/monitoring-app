@@ -1,5 +1,7 @@
+import { log } from 'console';
+
 import { scheduleJob } from 'node-schedule';
-import { dispatchRequests } from '../requestor/index.js';
+import dispatchRequests from '../requestor/index.js';
 import checksService from '../checks/checks.service.js';
 import responsesService from '../responses/responses.service.js';
 import notifier from '../notifications/index.js';
@@ -7,17 +9,17 @@ import notifier from '../notifications/index.js';
 // const RUN_EVERY_FIVE_SECONDS_PATTERN = '*/5 * * * * *';
 const RUN_EVERY_MINUTE_PATTERN = '0 * * * * *';
 
-export const start = () => {
+export default () => {
   scheduleJob(RUN_EVERY_MINUTE_PATTERN, async () => {
     const time = new Date();
     time.setMilliseconds(0);
-    console.log('Scheduler started:', time);
+    log('Scheduler started:', time);
     // Fetch checks
     const checks = await checksService.findReady(time);
 
     // Dispatch requests
     const responses = await dispatchRequests(checks);
-  
+
     // Insert responses
     await responsesService.addResponses(responses);
 

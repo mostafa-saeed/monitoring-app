@@ -17,33 +17,33 @@ export default {
         $group: {
           _id: '$check',
           responseTime: {
-            $avg: '$duration'
+            $avg: '$duration',
           },
           checks: {
-            $sum: 1
+            $sum: 1,
           },
           upCount: {
             $sum: {
               $cond: [
                 { $eq: ['$status', 'up'] },
                 1,
-                0
-              ]
-            }
+                0,
+              ],
+            },
           },
           downCount: {
             $sum: {
               $cond: [
                 { $eq: ['$status', 'down'] },
                 1,
-                0
-              ]
-            }
+                0,
+              ],
+            },
           },
           history: {
-            $push: '$$ROOT'
-          }
-        }
+            $push: '$$ROOT',
+          },
+        },
       },
       // Lookup for the check to get the interval
       {
@@ -51,8 +51,8 @@ export default {
           from: 'checks',
           localField: '_id',
           foreignField: '_id',
-          as: 'checkObject'
-        }
+          as: 'checkObject',
+        },
       },
       { $unwind: '$checkObject' },
 
@@ -62,18 +62,18 @@ export default {
           availability: {
             $multiply: [
               { $divide: ['$upCount', '$checks'] },
-              100
-            ]
+              100,
+            ],
           },
           status: '$checkObject.status',
           uptime: {
-            $multiply: ['$upCount', '$checkObject.interval', 60]
+            $multiply: ['$upCount', '$checkObject.interval', 60],
           },
           downtime: {
-            $multiply: ['$downCount', '$checkObject.interval', 60]
+            $multiply: ['$downCount', '$checkObject.interval', 60],
           },
-        }
+        },
       },
     ]);
-  }
+  },
 };

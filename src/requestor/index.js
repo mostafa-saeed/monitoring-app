@@ -46,21 +46,18 @@ const createRequestOptions = (check) => {
   return options;
 };
 
-const getResponse = (promiseResult) => {
-  return promiseResult.status === 'fulfilled' ?
-    {
-      response: promiseResult.value.data,
-      duration: promiseResult.value.duration,
-    } : {
-      response: promiseResult.reason.response ? promiseResult.reason.response.data : promiseResult.reason.message,
-      duration: promiseResult.reason.duration,
-    };
-};
+const getResponse = (promiseResult) => (promiseResult.status === 'fulfilled'
+  ? {
+    response: promiseResult.value.data,
+    duration: promiseResult.value.duration,
+  } : {
+    response: promiseResult.reason.response?.data || promiseResult.reason.message,
+    duration: promiseResult.reason.duration,
+  });
 
-
-export const dispatchRequests = async (checks) => {
+export default async (checks) => {
   const promisesResults = await Promise.allSettled(
-    checks.map((check) => axios(createRequestOptions(check)))
+    checks.map((check) => axios(createRequestOptions(check))),
   );
 
   return checks.map((check, index) => ({
