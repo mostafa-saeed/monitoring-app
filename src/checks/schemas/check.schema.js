@@ -39,6 +39,7 @@ const checkSchema = new Schema({
     type: [String],
     default: [],
   },
+  webhook: String,
 
   nextCheck: Date,
   status: {
