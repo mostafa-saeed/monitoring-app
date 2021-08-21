@@ -1,11 +1,12 @@
 import mongoose from 'mongoose';
+import ResponseStatuses from '../responseStatuses.enum.js';
 
 const { Schema, model } = mongoose;
 
 const responseSchema = new Schema({
   status: {
     type: String,
-    enum: ['up', 'down'],
+    enum: Object.values(ResponseStatuses),
   },
   response: Object,
   duration: Number,

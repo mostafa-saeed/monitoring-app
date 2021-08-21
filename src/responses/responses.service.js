@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import Responses from './schemas/response.schema.js';
+import ResponseStatuses from './responseStatuses.enum.js';
 
 export default {
 
@@ -25,7 +26,7 @@ export default {
           upCount: {
             $sum: {
               $cond: [
-                { $eq: ['$status', 'up'] },
+                { $eq: ['$status', ResponseStatuses.UP] },
                 1,
                 0,
               ],
@@ -34,7 +35,7 @@ export default {
           downCount: {
             $sum: {
               $cond: [
-                { $eq: ['$status', 'down'] },
+                { $eq: ['$status', ResponseStatuses.DOWN] },
                 1,
                 0,
               ],

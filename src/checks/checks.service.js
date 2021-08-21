@@ -1,5 +1,6 @@
 import Mongoose from 'mongoose';
 import Checks from './schemas/check.schema.js';
+import ResponseStatuses from '../responses/responseStatuses.enum.js';
 
 const MILLISECONDS_IN_MINUTE = 60_000;
 
@@ -75,6 +76,7 @@ export default {
       },
     ]);
 
+    // Since $limit doesn't work with variables, I'll trunc the array
     // Trunc checks' responses
     return checksResponses.map((check) => {
       check.responses = check.responses.slice(0, check.threshold);
@@ -102,9 +104,9 @@ export default {
       $set: {
         status: {
           $cond: [
-            { $eq: ['$status', 'up'] },
-            'down',
-            'up',
+            { $eq: ['$status', ResponseStatuses.UP] },
+            ResponseStatuses.DOWN,
+            ResponseStatuses.UP,
           ],
         },
       },

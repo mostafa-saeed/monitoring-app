@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import ResponseStatuses from '../../requestor/responseStatuses.enum.js';
+import ResponseStatuses from '../../responses/responseStatuses.enum.js';
 
 const { Schema, model } = mongoose;
 
