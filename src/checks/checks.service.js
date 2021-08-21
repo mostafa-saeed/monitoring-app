@@ -28,6 +28,26 @@ export default {
     }).populate('user');
   },
 
+  update(id, updatePayload, userId) {
+    return Checks.findOneAndUpdate({ _id: id, user: userId }, {
+      $set: updatePayload,
+    }, {
+      new: true,
+    });
+  },
+
+  delete(id, userId) {
+    return Checks.findOneAndDelete({ _id: id, user: userId });
+  },
+
+  enable(id, userId) {
+    return this.update(id, { isActive: true }, userId);
+  },
+
+  disable(id, userId) {
+    return this.update(id, { isActive: false }, userId);
+  },
+
   setNextCheck(checks, time) {
     const ids = checks.map((check) => Mongoose.Types.ObjectId(check._id));
     return Checks.updateMany(
