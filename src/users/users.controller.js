@@ -1,4 +1,5 @@
 import { badRequest } from '@hapi/boom';
+import sendEmail from '../common/sendgrid.service.js';
 import usersService from './users.service.js';
 import { hashPassword, comparePassword, generateToken } from './auth.service.js';
 
@@ -21,6 +22,9 @@ export default {
       password: hashedPassword,
       token,
     });
+
+    // Send an email with the token
+    await sendEmail(email, 'Email confirmation', `Your token is ${token}.`);
     res.json(usersService.userResponse(user));
   },
 
