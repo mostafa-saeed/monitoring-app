@@ -7,6 +7,9 @@ services:
     environment:
       - PORT=3000
       - DB_CONNECTION_STRING=mongodb://mongo/development_db
+      - JWT_SECRET=nMkbb6q\LGbU;j&4
+    env_file:
+      - ./.env
     restart: always
     command: ./node_modules/nodemon/bin/nodemon.js --tls-min-v1.0 src/app.js
     volumes:

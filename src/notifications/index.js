@@ -1,8 +1,11 @@
 import consoleNotification from './console.notification.js';
 import webhookNotification from './webhook.notification.js';
+import sendgridNotification from './sendgrid.notification.js';
 
 export default {
-  registeredNotifications: [consoleNotification, webhookNotification],
+  registeredNotifications: [
+    consoleNotification, webhookNotification, sendgridNotification,
+  ],
 
   promises: [],
 

@@ -30,5 +30,6 @@ export default () => {
     const changedChecks = await checksService.updateChangedChecks(checks, responses);
     // Notify changed checks
     await notifier.sendNotifications(changedChecks);
+    log('All notifications are sent!');
   });
 };

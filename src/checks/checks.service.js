@@ -11,25 +11,21 @@ const DEFAULT_CHECK_OPTIONS = {
 };
 
 export default {
-  create(checkPayload) {
-    const check = { ...DEFAULT_CHECK_OPTIONS, ...checkPayload };
+  create(checkPayload, userId) {
+    const check = { ...DEFAULT_CHECK_OPTIONS, ...checkPayload, user: userId };
     check.nextCheck = Date.now() + check.interval * MILLISECONDS_IN_MINUTE;
     return Checks.create(check);
   },
 
-  findById(id) {
-    return Checks.findById(id);
-  },
-
-  findByUser(userId) {
-    return Checks.find({ user: userId });
+  findOne(id, userId) {
+    return Checks.findOne({ _id: id, user: userId });
   },
 
   findReady(time) {
     return Checks.find({
       isActive: true,
       nextCheck: { $lte: time },
-    });
+    }).populate('user');
   },
 
   setNextCheck(checks, time) {
@@ -78,8 +74,8 @@ export default {
 
     // Since $limit doesn't work with variables, I'll trunc the array
     // Trunc checks' responses
-    return checksResponses.map((check) => {
-      check.responses = check.responses.slice(0, check.threshold);
+    return checks.map((check, index) => {
+      check.responses = checksResponses[index].responses.slice(0, check.threshold);
       return check;
     });
   },
