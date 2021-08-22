@@ -22,6 +22,14 @@ server.use('/api/checks', checksRouter);
 server.use('/api/users', usersRouter);
 
 server.use((err, req, res, next) => {
+  console.log(err);
+  if (err.error?.isJoi) {
+    return res.status(400).json({
+      type: err.type,
+      message: err.error.toString(),
+    });
+  }
+
   if (err.name === 'UnauthorizedError') {
     return next(
       res.status(401).json({ reason: 'INVALID_TOKEN' }),
