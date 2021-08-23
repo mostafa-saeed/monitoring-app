@@ -25,7 +25,7 @@ export default {
     return Checks.find({
       isActive: true,
       nextCheck: { $lte: time },
-    }).populate('user');
+    }).populate('user').lean();
   },
 
   update(id, updatePayload, userId) {

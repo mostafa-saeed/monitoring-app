@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import asyncMiddleware from '../common/asyncMiddleware.js';
+import asyncMiddleware from '../common/async.middleware.js';
 import validationMiddleware from '../common/validation.middleware.js';
 import { isLoggedIn } from './auth.service.js';
 import usersController from './users.controller.js';
